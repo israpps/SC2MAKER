@@ -958,6 +958,31 @@ static int sc2_writepage(lua_State *L) {
     return 1;
 }
 
+static int sc2_wipepage(lua_State *L) {
+    CHECK_RPC_INIT();
+	int argc = lua_gettop(L);
+	size_t newpagesize;
+    conquest_packet_t pkt;
+	if (argc < 4) return luaL_error(L, "wrong number of arguments (need 4)");
+    memset(&pkt, 0, sizeof(u32)*4);
+    pkt.port = luaL_checkinteger(L, 1);
+    pkt.slot = luaL_checkinteger(L, 2);
+    pkt.pagenum = luaL_checkinteger(L, 3);
+	u8 erasebyte = (u8)luaL_checkinteger(L, 4);
+
+    printf("Eraseb %02X\n", erasebyte);
+    memset(&pkt.page.full, erasebyte, MEMORYCARD_PAGESIZE_ECC);
+
+    if (SifCallRpc(&sc2_rpc, SC2_WRITEPAGE, 0, RPCBUFF_PARAMS(pkt), NULL, NULL) < 0)
+    {
+        printf("%s: RPC ERROR\n", __FUNCTION__);
+		lua_pushnil(L);
+        return 1;
+    }
+	lua_pushinteger(L, pkt.ret);
+    return 1;
+}
+
 static int sc2_check_card_magic(lua_State *L) {
     CHECK_RPC_INIT();
 	int argc = lua_gettop(L);
@@ -1085,12 +1110,11 @@ static int sc2_get_cardspecs(lua_State *L) {
     return 1;
 }
 
-
-
 static const luaL_Reg Sc2_functions[] = {
 	{"rpcbind",              sc2_rpcbind},
 	{"readpage",             sc2_readpage},
 	{"writepage",            sc2_writepage},
+	{"clearpage",            sc2_wipepage},
 	{"eraseblock",           sc2_eraseblock},
 	{"authcard",             sc2_authcard},
 	{"identify_card",        sc2_check_card_magic},

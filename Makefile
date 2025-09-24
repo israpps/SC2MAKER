@@ -40,8 +40,8 @@ PS2LINK_IP = 192.168.1.10
 F_KEYBOARD ?= 1
 
 BINDIR = bin/
-EE_BIN = $(BINDIR)enceladus.elf
-EE_BIN_PKD = $(BINDIR)enceladus_pkd.elf
+EE_BIN = $(BINDIR)sc2maker.elf
+EE_BIN_PKD = $(BINDIR)sc2maker_pkd.elf
 
 EE_LIBS = -L$(PS2SDK)/ports/lib -L$(PS2DEV)/gsKit/lib/ -Lmodules/ds34bt/ee/ -Lmodules/ds34usb/ee/ \
 	-lpatches -lfileXio -lpad -ldebug -llua -lmath3d -ljpeg -lfreetype -lgskit_toolkit -lgskit -ldmakit \

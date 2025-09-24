@@ -48,7 +48,7 @@ end
 
 CARD = {
   authstate=0;--- 0:failed to auth. 1:successfull auth, new card inserted. 2:successfull auth, same card than last auth present
-  cardtype=0;
+  cardtype=0;--- 0:unknown, 1:normal MC, 2:SC2
   specs = {
     pagesize=0;
     blocksize=0;
@@ -128,12 +128,19 @@ function MainMenu(pad, sel)
     LNG.CAP_DUMPCARD,
     LNG.CAP_CREDITS,
   }
+
+  local MCIMG = {}
+  MCIMG[0] = IMG.mc_empty;
+  MCIMG[1] = IMG.mc_ps2;
+  MCIMG[2] = IMG.mc_sc2;
   for i = 1, #opts do
     Font.ftPrint(FNT[3], i == sel and 52 or 50, (i*20)+50, 0, S.X, S.Y, opts[i], i == sel and C.YELLOW or C.GREY)
   end
-  Font.ftPrint(FNT[2], 490, 100, 0, S.X, S.Y, "Current Card:")
-  Font.ftPrint(FNT[3], 500, 120, 0, S.X, S.Y, ("specret:%d\nPages Per Block:0x%X\nCardFlags:0x%X\nCardSize:0x%X\nPageSize:0x%X"):format(
+  Font.ftPrint(FNT[2], 450, 100, 0, S.X, S.Y, "Current Card:")
+  Font.ftPrint(FNT[3], 450, 120, 0, S.X, S.Y, ("specret:%d\nPages Per Block:0x%X\nCardFlags:0x%X\nCardSize:0x%X\nPageSize:0x%X"):format(
     CARD.specs.ret, CARD.specs.blocksize, CARD.specs.cardflags, CARD.specs.cardsize, CARD.specs.pagesize), C.WGREY)
+  Graphics.drawScaleImage(MCIMG[CARD.cardtype], 450, 220, 64, 64)
+
   Font.ftPrint(FNT[3], 50, 400, 0, S.X, S.Y, desc[sel], C.WGREY)
 
   Font.ftPrint(FNT[3], 50, 420, 0, S.X, S.Y, "SELECT: "..LNG.LAB_SWAPCARD)
@@ -188,12 +195,17 @@ function CreateConquestCard(port)
       local progi = (i * 100) / CN.MC_AMMOUNT_OF_PAGES
       if (i%8)==0 then ProgressDisplay(progi, C.SWHITE, LNG.CREATING_NEW_CARD, ("%.0f%%"):format(progi)) end
       buf = System.readFile(fd, CN.MC_PAGESIZE_NECC)
-      if (i%pages_per_block)==0 then
-        ret = Conquest.erasepage(port, 0, i/pages_per_block)
-        if ret ~= 1 then
+      if (i % pages_per_block)==0 then
+        ret = Conquest.eraseblock(port, 0, (i/pages_per_block))
+        if ret ~= 0 then
           ret = 1
           retstr = ("I/O Error on erasing page %d"):format(i)
           break
+        end
+        --Conquest.clearpage(port, 0, i, 0xFF)
+        for z = 0, pages_per_block-1 , 1 do
+          print("clearing page "..(i+z))
+          Conquest.clearpage(port, 0, i+z, 0xFF)
         end
       end
       ret = Conquest.writepage(port, 0, i, buf)
@@ -364,11 +376,7 @@ UI = {
 UISTATE = UI.MAINMENU
 local mms = 1
 --Opening()
-Refresh_cardstate(true, false, false)
-Refresh_cardstate(true, false, false)
-Refresh_cardstate(true, false, false)
-Refresh_cardstate(false, true, false)
---Refresh_cardstate(true, true, true) --TODO: remove me when Opening() is uncommented
+Refresh_cardstate(true, true, true) --TODO: remove me when Opening() is uncommented
 
 while true do
   local sel = Pads.update()

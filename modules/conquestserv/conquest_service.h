@@ -41,7 +41,7 @@ typedef struct eraseblock_packet_ {
     s32 port; // Input
     s32 slot; // Input
     s32 blocknum; // the memory card block to be erased
-    s32 ret; // Output, must be 0 to find valid data on the rest of the struct
+    s32 ret;
 
 }eraseblock_packet_t;
 
