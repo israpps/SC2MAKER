@@ -1,0 +1,100 @@
+
+#if defined(BUILDING_XFROMMAN)
+DECLARE_EXPORT_TABLE(xfromman, 2, 3)
+#elif defined(BUILDING_XMCMAN)
+DECLARE_EXPORT_TABLE(mcman, 2, 3)
+#else
+DECLARE_EXPORT_TABLE(mcman, 1, 1)
+#endif
+	DECLARE_EXPORT(_start)        //  0
+	DECLARE_EXPORT(_dummy)        //  1
+	DECLARE_EXPORT(_dummy)        //  2
+	DECLARE_EXPORT(_dummy)        //  3
+	DECLARE_EXPORT(_start)        //  4
+	DECLARE_EXPORT(McDetectCard)  //  5
+	DECLARE_EXPORT(McOpen)        //  6
+	DECLARE_EXPORT(McClose)       //  7
+	DECLARE_EXPORT(McRead)        //  8
+	DECLARE_EXPORT(McWrite)       //  9
+	DECLARE_EXPORT(McSeek)        // 10
+	DECLARE_EXPORT(McFormat)      // 11
+	DECLARE_EXPORT(McGetDir)      // 12
+	DECLARE_EXPORT(McDelete)      // 13
+	DECLARE_EXPORT(McFlush)       // 14
+	DECLARE_EXPORT(McChDir)       // 15
+	DECLARE_EXPORT(McSetFileInfo) // 16
+#if defined(BUILDING_XMCMAN)
+	DECLARE_EXPORT(McEraseBlock2) // 17
+#else
+	DECLARE_EXPORT(McEraseBlock)  // 17
+#endif
+	DECLARE_EXPORT(McReadPage)    // 18
+	DECLARE_EXPORT(McWritePage)   // 19
+	DECLARE_EXPORT(McDataChecksum)// 20
+#if defined(BUILDING_XMCMAN)
+	DECLARE_EXPORT(McDetectCard2)     // 21
+	DECLARE_EXPORT(McGetFormat)       // 22
+	DECLARE_EXPORT(McGetEntSpace)     // 23
+	DECLARE_EXPORT(McReplaceBadBlock) // 24
+	DECLARE_EXPORT(McCloseAll)        // 25
+#else
+	DECLARE_EXPORT(_dummy)            // 21
+	DECLARE_EXPORT(_dummy)            // 22
+	DECLARE_EXPORT(_dummy)            // 23
+	DECLARE_EXPORT(_dummy)            // 24
+	DECLARE_EXPORT(_dummy)            // 25
+#endif
+	DECLARE_EXPORT(_dummy)            // 26
+	DECLARE_EXPORT(_dummy)            // 27
+	DECLARE_EXPORT(_dummy)            // 28
+	DECLARE_EXPORT(McReadPS1PDACard)  // 29
+	DECLARE_EXPORT(McWritePS1PDACard) // 30
+	DECLARE_EXPORT(_dummy)            // 31
+	DECLARE_EXPORT(_dummy)            // 32
+	DECLARE_EXPORT(_dummy)            // 33
+	DECLARE_EXPORT(_dummy)            // 34
+	DECLARE_EXPORT(_dummy)            // 35
+	DECLARE_EXPORT(McUnformat)		  // 36
+	DECLARE_EXPORT(McRetOnly)         // 37
+	DECLARE_EXPORT(McGetFreeClusters) // 38
+	DECLARE_EXPORT(McGetMcType)       // 39
+	DECLARE_EXPORT(McSetPS1CardFlag)  // 40
+	DECLARE_EXPORT(_dummy)			  // 41
+#if defined(BUILDING_XMCMAN)
+	DECLARE_EXPORT(McGetModuleInfo)           // 42
+	DECLARE_EXPORT(McGetCardSpec)             // 43
+	DECLARE_EXPORT(McGetFATentry)             // 44
+	DECLARE_EXPORT(McCheckBlock)              // 45
+	DECLARE_EXPORT(McSetFATentry)             // 46
+	DECLARE_EXPORT(McReadDirEntry)            // 47
+	DECLARE_EXPORT(Mc1stCacheEntSetWrFlagOff) // 48
+	DECLARE_EXPORT(McCreateDirentry)		  // 49
+	DECLARE_EXPORT(McReadCluster)			  // 50
+	DECLARE_EXPORT(McFlushCache)			  // 51
+	DECLARE_EXPORT(McSetDirEntryState)		  // 52
+#else
+	DECLARE_EXPORT(_dummy)	// 42
+	DECLARE_EXPORT(_dummy)	// 43
+	DECLARE_EXPORT(_dummy)	// 44
+	DECLARE_EXPORT(_dummy)	// 45
+	DECLARE_EXPORT(_dummy)	// 46
+	DECLARE_EXPORT(_dummy)	// 47
+	DECLARE_EXPORT(_dummy)	// 48
+	DECLARE_EXPORT(_dummy)	// 49
+	DECLARE_EXPORT(_dummy)	// 50
+	DECLARE_EXPORT(_dummy)	// 51
+	DECLARE_EXPORT(_dummy)	// 52
+#endif
+	DECLARE_EXPORT(_dummy)	// 53
+#ifdef CONQUEST_CARD
+	DECLARE_EXPORT(_dummy)	// 54: some semapore getter IIRC
+	DECLARE_EXPORT(_dummy)  // 55: Unknown, check it... seems unrelated to conquest card. setups a page read with the normal sio2transfer method
+	DECLARE_EXPORT(nmConquestPageErase) // 56
+	DECLARE_EXPORT(nmConquestPageRead) // 57
+	DECLARE_EXPORT(nmConquestPageWrite)    // 58
+	DECLARE_EXPORT(nmConquestAuthCard) // 59
+	DECLARE_EXPORT(_dummy)			   // 60
+#endif
+END_EXPORT_TABLE
+
+void _dummy() {}
