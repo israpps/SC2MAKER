@@ -944,10 +944,11 @@ static int sc2_writepage(lua_State *L) {
 	memcpy(pkt.page.full, newpagedata, MEMORYCARD_PAGESIZE);
 	uint32_t crc = conquest_hash(pkt.page.full, MEMORYCARD_PAGESIZE);
 	//to keep the data size to be moved, we skip ECC from the material Image and regenerte on real time before writing
-	pkt.page.full[MEMORYCARD_PAGESIZE    ] = (crc >> 24) & 0xFF;
-    pkt.page.full[MEMORYCARD_PAGESIZE + 1] = (crc >> 16) & 0xFF;
-    pkt.page.full[MEMORYCARD_PAGESIZE + 2] = (crc >> 8)  & 0xFF;
-    pkt.page.full[MEMORYCARD_PAGESIZE + 3] = crc & 0xFF;
+	memset(pkt.page.split.ecc, 0xFF, MEMORYCARD_ECCSIZE);
+	pkt.page.split.ecc[0] = (crc >> 24) & 0xFF;
+    pkt.page.split.ecc[1] = (crc >> 16) & 0xFF;
+    pkt.page.split.ecc[2] = (crc >> 8)  & 0xFF;
+    pkt.page.split.ecc[3] = crc & 0xFF;
     if (SifCallRpc(&sc2_rpc, SC2_WRITEPAGE, 0, RPCBUFF_PARAMS(pkt), NULL, NULL) < 0)
     {
         printf("%s: RPC ERROR\n", __FUNCTION__);
