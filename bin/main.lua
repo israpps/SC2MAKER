@@ -48,7 +48,7 @@ end
 
 CARD = {
   authstate=0;--- 0:failed to auth. 1:successfull auth, new card inserted. 2:successfull auth, same card than last auth present
-  cardtype=0;--- 0:unknown, 1:normal MC, 2:SC2
+  cardtype=0;
   specs = {
     pagesize=0;
     blocksize=0;
@@ -69,6 +69,8 @@ C = {
   YELLOW=Color.new(200,200,0);
   WGREY=Color.new(100,100,100,120);
   SWHITE=Color.new(250,250,250);
+  GREEN=Color.new(10, 200, 10);
+  BASE=Color.new(128, 128, 128);
 }
 
 function CLAMP(a, MIN, MAX)
@@ -103,6 +105,13 @@ function HEXDUMP(DATA)
   return MESSAGE
 end
 
+function CardIsSuitable()
+  if CARD.specs.pagesize ~= 0x200 then return -1 end
+  if CARD.specs.cardsize < 0x4000 then return -2 end
+  if not (CARD.specs.cardflags & 1) then return -3 end
+  return 0
+end
+
 function ProgressDisplay(progress, color, message, message2)
   Screen.clear()
   Graphics.drawScaleImage(IMG.background, 0, 0, S.X, S.Y)
@@ -111,6 +120,13 @@ function ProgressDisplay(progress, color, message, message2)
   DrawbarNbg(S.XM, S.YM, 100, Color.new(100,100,100,50))
   DrawbarNbg(S.XM, S.YM, progress, color)
   Screen.flip()
+end
+
+function NewCardEntry(pad)
+    Graphics.drawScaleImage(IMG.background, 0, 0, S.X, S.Y)
+    Font.ftPrint(FNT[1], S.XM, 50 , 8, S.X, S.Y, "Change the card")
+    Font.ftPrint(FNT[3], S.XM, 150, 8, S.X, S.Y, "Change the card on port 2")
+    Font.ftPrint(FNT[3], S.XM, 170, 8, S.X, S.Y, "when you are done, press SELECT to proceed")
 end
 
 function MainMenu(pad, sel)
@@ -128,27 +144,37 @@ function MainMenu(pad, sel)
     LNG.CAP_DUMPCARD,
     LNG.CAP_CREDITS,
   }
-
-  local MCIMG = {}
-  MCIMG[0] = IMG.mc_empty;
-  MCIMG[1] = IMG.mc_ps2;
-  MCIMG[2] = IMG.mc_sc2;
   for i = 1, #opts do
     Font.ftPrint(FNT[3], i == sel and 52 or 50, (i*20)+50, 0, S.X, S.Y, opts[i], i == sel and C.YELLOW or C.GREY)
   end
-  Font.ftPrint(FNT[2], 450, 100, 0, S.X, S.Y, "Current Card:")
-  Font.ftPrint(FNT[3], 450, 120, 0, S.X, S.Y, ("specret:%d\nPages Per Block:0x%X\nCardFlags:0x%X\nCardSize:0x%X\nPageSize:0x%X"):format(
-    CARD.specs.ret, CARD.specs.blocksize, CARD.specs.cardflags, CARD.specs.cardsize, CARD.specs.pagesize), C.WGREY)
-  Graphics.drawScaleImage(MCIMG[CARD.cardtype], 450, 220, 64, 64)
-
+  local validsize = CARD.specs.pagesize == 0x200 and C.GREEN or C.RED
+  local validpagec = CARD.specs.cardsize == 0x4000 and C.GREEN or C.RED
+  local validflags = (CARD.specs.cardflags & 1) and C.GREEN or C.RED
+  Graphics.drawRect(480, 90, S.X-480, 130, Color.new(0,0,0,60))
+  Font.ftPrint(FNT[2], 490, 100, 0, S.X, S.Y, "Current Card:")
+  if CARD.info.type == 2 then
+    Font.ftPrint(FNT[3], 491, 120, 0, S.X, S.Y, ("Pages Per Block: 0x%X"):format(CARD.specs.blocksize), C.GREEN)
+    Font.ftPrint(FNT[3], 491, 140, 0, S.X, S.Y, ("Card Flags: 0x%X"):format(CARD.specs.cardflags), validflags)
+    Font.ftPrint(FNT[3], 491, 160, 0, S.X, S.Y, ("Pages in Card: 0x%X"):format(CARD.specs.cardsize), validpagec)
+    Font.ftPrint(FNT[3], 491, 180, 0, S.X, S.Y, ("Page Size: 0x%X"):format(CARD.specs.pagesize), validsize)
+    if (validsize ~= C.GREEN or validpagec ~= C.GREEN or validflags ~= C.GREEN) then
+      Font.ftPrint(FNT[2], 490, 200, 0, S.X, S.Y, "Card is NOT suitable", C.RED)
+    end
+  else
+    Font.ftPrint(FNT[3], 491, 120, 0, S.X, S.Y, "Not a PS2 Card", C.RED)
+  end
   Font.ftPrint(FNT[3], 50, 400, 0, S.X, S.Y, desc[sel], C.WGREY)
 
   Font.ftPrint(FNT[3], 50, 420, 0, S.X, S.Y, "SELECT: "..LNG.LAB_SWAPCARD)
 end
 
-function GenericPrompt(pad, prompt)
+function GenericNotif(prompt)
   Graphics.drawScaleImage(IMG.background, 0, 0, S.X, S.Y)
   Font.ftPrint(FNT[1], S.XM, 0, 8, S.X, S.Y, prompt)
+end
+
+function GenericPrompt(pad, prompt)
+  GenericNotif(prompt)
   Font.ftPrint(FNT[3], 40, 400, 0, S.X, S.Y, "O:"..LNG.CANCEL.."  X:"..LNG.CONTINUE)
   if Pads.check(pad, PAD_CIRCLE) then return -1 end
   if Pads.check(pad, PAD_CROSS) then return 1 end
@@ -176,7 +202,7 @@ function Refresh_cardstate(auth, specs, cardtype)
   end
   if specs then
     CARD.specs = Conquest.get_cardspecs(1, 0)
-    print(("spects for mc%d: %X %X %X %X"):format(1, CARD.specs.blocksize, CARD.specs.cardflags, CARD.specs.cardsize, CARD.specs.pagesize))
+    print(("spects for mc%d: (r:%d) %X %X %X %X"):format(1, CARD.specs.ret, CARD.specs.blocksize, CARD.specs.cardflags, CARD.specs.cardsize, CARD.specs.pagesize))
   end
   if cardtype then
     CARD.cardtype = Conquest.identify_card(1, 0)
@@ -193,19 +219,14 @@ function CreateConquestCard(port)
   if System.sizeFile(fd) == CN.MCDUMP_ECC then
     for i = 0, CN.MC_AMMOUNT_OF_PAGES-1, 1 do
       local progi = (i * 100) / CN.MC_AMMOUNT_OF_PAGES
-      if (i%8)==0 then ProgressDisplay(progi, C.SWHITE, LNG.CREATING_NEW_CARD, ("%.0f%%"):format(progi)) end
+      if (i%2)==0 then ProgressDisplay(progi, C.SWHITE, LNG.CREATING_NEW_CARD, ("%.0f%%"):format(progi)) end
       buf = System.readFile(fd, CN.MC_PAGESIZE_NECC)
-      if (i % pages_per_block)==0 then
-        ret = Conquest.eraseblock(port, 0, (i/pages_per_block))
+      if (i%pages_per_block)==0 then--this is the first page of a new block. nuke it
+        ret = Conquest.eraseblock(port, 0, i/pages_per_block)
         if ret ~= 0 then
           ret = 1
           retstr = ("I/O Error on erasing page %d"):format(i)
           break
-        end
-        --Conquest.clearpage(port, 0, i, 0xFF)
-        for z = 0, pages_per_block-1 , 1 do
-          print("clearing page "..(i+z))
-          Conquest.clearpage(port, 0, i+z, 0xFF)
         end
       end
       ret = Conquest.writepage(port, 0, i, buf)
@@ -226,7 +247,6 @@ end
 function DumpConquestCard(port)
   local ret = false
   ProgressDisplay(0,C.SWHITE, LNG.CREATING_DUMPFILE);
-  local i = 0
   local filee = ""
   for i = 0, 32, 1 do
     filee="dumpcard_"..i..".bin"
@@ -372,11 +392,16 @@ UI = {
   VERIFYCARD = 4;
   DUMPCARD = 5;
   CREDITS = 6;
+  SWAPCARD = 7;
 }
 UISTATE = UI.MAINMENU
 local mms = 1
 --Opening()
-Refresh_cardstate(true, true, true) --TODO: remove me when Opening() is uncommented
+Refresh_cardstate(true, false, false)
+Refresh_cardstate(true, false, false)
+Refresh_cardstate(true, false, false)
+Refresh_cardstate(false, true, false)
+--Refresh_cardstate(true, true, true) --TODO: remove me when Opening() is uncommented
 
 while true do
   local sel = Pads.update()
@@ -384,7 +409,7 @@ while true do
   if UISTATE == UI.MAINMENU then
     MainMenu(sel, mms)
     if Pads.check(sel, PAD_SELECT) then
-      UISTATE = 99
+      UISTATE = UI.SWAPCARD
     elseif Pads.check(sel, PAD_DOWN) then
       mms=CYCLE_CLAMP(mms+1, 1, 5)
     elseif Pads.check(sel, PAD_UP) then
@@ -395,29 +420,41 @@ while true do
       mms=1
     end
   elseif UISTATE == UI.CONVERTCARD or UISTATE == UI.REPAIRCARD then
-    local a, b
-    a, b = CreateConquestCard(1)
-    ConvertionReport(a, b)
-    UISTATE = UI.MAINMENU
+    if CardIsSuitable() == 0 then
+      local a, b
+      a, b = CreateConquestCard(1)
+      ConvertionReport(a, b)
+      UISTATE = UI.MAINMENU
+    else
+      GenericNotif(LNG.INVALID_CARD_FOR_CONVERTION)
+      if sel ~= 0 then UISTATE=UI.MAINMENU end
+    end
   elseif UISTATE == UI.VERIFYCARD then
-    local a = CardPrompt()
-    if a ~= nil then
+    if CARD.info.format == 2 and CARD.cardtype == 2 then
       local L = VerifyConquestCard(1)
       ChecksumReport(L)
       UISTATE = 1
+    else
+      GenericNotif(LNG.NOT_A_CONQUEST_CARD)
+      if sel ~= 0 then UISTATE=UI.MAINMENU end
     end
   elseif UISTATE == UI.DUMPCARD then
-    local a = CardPrompt()
-    if a ~= nil then
-      if a == -1 then UISTATE = 1 end
-      if a == 0 or a == 1 then
+    if CARD.info.format == 2 and CARD.cardtype == 2 then
         DumpConquestCard(1)
-        UISTATE =1
-      end
+        UISTATE = 1
+    else
+      GenericNotif(LNG.NOT_A_CONQUEST_CARD)
+      if sel ~= 0 then UISTATE=UI.MAINMENU end
     end
   elseif UISTATE == UI.CREDITS then
     Credits()
     if sel ~= 0 then UISTATE = UI.MAINMENU end
+  elseif UISTATE == UI.SWAPCARD then
+    NewCardEntry(sel)
+    if Pads.check(sel, PAD_SELECT) then
+      Refresh_cardstate(true, true, true)
+      UISTATE=UI.MAINMENU
+    end
   end
   Screen.flip()
 end
