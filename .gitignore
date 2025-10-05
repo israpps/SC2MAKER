@@ -33,7 +33,7 @@ bin/test.pdf
 bin/System/noindex.lua
 *.a
 *.irx
-
+!embed/iop/*
 obj/
 asm/
 bin/dumpcard_*.bin
