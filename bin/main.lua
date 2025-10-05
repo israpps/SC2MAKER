@@ -414,9 +414,8 @@ function Greeting2(i, f)
   Font.ftPrint(FNT[3], S.XM, 170, 8, S.X, S.Y, LNG.SPECIAL_FORMAT_INSTRUCTIONS[2], C1)
   Font.ftPrint(FNT[3], S.XM, 200, 8, S.X, S.Y, LNG.SPECIAL_FORMAT_INSTRUCTIONS[4], C1)
   if not console_is_arcade then
+    Font.ftPrint(FNT[3], S.XM, 220, 8, S.X, S.Y, LNG.SPECIAL_FORMAT_INSTRUCTIONS[3], C1)
     Font.ftPrintMultiLineAligned(FNT[3], S.XM, 250, 20, S.X, S.Y, LNG.ARCADE_KEYS_NOTICE, C1)
-  else
-    Font.ftPrint(FNT[3], S.XM, 250, 8, S.X, S.Y, LNG.SPECIAL_FORMAT_INSTRUCTIONS[3], C1)
   end
 end
 

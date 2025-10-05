@@ -48,12 +48,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: SC2Maker
-        path: SC2Maker.7z
-
-    - name: Compress & Rename bin folder
-      run: |
-        mv bin/ Enceladus/
-        tar -zcvf Enceladus.tar.gz Enceladus
+        path: SC2Maker_*.7z
 
     - name: Create pre-release
       if: github.ref == 'refs/heads/main'
@@ -63,13 +58,13 @@ jobs:
         automatic_release_tag: "latest"
         title: "Development build"
         files: |
-               SC2Maker.7z
+               SC2Maker_*.7z
 
     - name: Release
       if: startsWith(github.ref, 'refs/tags/')
       uses: softprops/action-gh-release@v1
       with:
-        files: SC2Maker.7z
+        files: SC2Maker_*.7z
         tag_name: ${{ steps.tag.outputs.VERSION }}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
