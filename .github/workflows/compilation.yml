@@ -22,7 +22,7 @@ jobs:
     steps:
     - name: Install dependencies
       run: |
-        apk add build-base git bash
+        apk add build-base git bash p7zip
 
     - name: Workaround permission issue
       run: |

@@ -145,11 +145,12 @@ function ProgressDisplay(progress, color, message, message2, imgaug)
   Screen.flip()
 end
 
-function NewCardEntry(pad)
+function NewCardEntry(pad, P)
     Graphics.drawScaleImage(IMG.background, 0, 0, S.X, S.Y)
     Font.ftPrint(FNT[1], S.XM, 50 , 8, S.X, S.Y, LNG.CARD_CHANGER)
     Font.ftPrint(FNT[3], S.XM, 150, 8, S.X, S.Y, LNG.CHANGE_MC1_NOW)
     Font.ftPrint(FNT[3], S.XM, 170, 8, S.X, S.Y, LNG.CARDCHANGE_SELECT2PROCEED)
+    Graphics.drawScaleImage(IMG.mc_ps2, S.XM-50, S.YM-50, 100, 100, Color.new(128,128,128,P))
 end
 
 function MainMenu(pad, sel)
@@ -573,9 +574,11 @@ while true do
     Credits()
     if sel ~= 0 then UISTATE = UI.MAINMENU end
   elseif UISTATE == UI.SWAPCARD then
-    NewCardEntry(sel)
+    mms = CYCLE_CLAMP(mms+1, 0, 128)
+    NewCardEntry(sel, mms)
     if Pads.check(sel, PAD_SELECT) then
       Refresh_cardstate(true, true, true)
+      mms=1
       UISTATE=UI.MAINMENU
     end
   end
