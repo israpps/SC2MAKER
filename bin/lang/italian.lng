@@ -1,0 +1,89 @@
+LNG = {
+  PROGTITLE = "Conquest Card Manager";
+  CREDITS = {
+    "Programma scritto da El_isra. Creato con Enceladus di Daniel Sant0s",
+    "Un ringraziamento speciale a:",
+    "Uyjulian, l_oliveira, krHACKen, DiscoStarslayer",
+    "extraweb1, bbsan2k, smb123w64gb, derole, qnox32",
+    "kuze e una persona che vuole rimanere anonima, per avermi donato le loro conquest cards",
+    "chiunque abbia condiviso il dump delle proprie conquest card",
+  };
+
+  ARCADE_KEYS_NOTICE = "Questo programma funzionerà unicamente con Card ufficiali, le uniche che supportano Arcade Magicgate\nAssicurati che la Card in tuo possesso sia dunque compatibile con il System246";
+  CONTINUE = "Continua";
+  CANCEL = "Annulla";
+  LAB_CONVERTCARD = "Converti una Conquest Card";
+  CAP_CONVERTCARD = "Converti una Memory Card normale in una Conquest Card";
+  LAB_REPAIRCARD = "Ripara una Conquest Card";
+  CAP_REPAIRCARD = "Ripara una Conquest Card esistente che risulta danneggiata";
+  LAB_CHECKCARD = "Verifica l'integrità della Conquest Card";
+  CAP_CHECKCARD = "Verifica se tutti i blocchi della Memory Card hanno un checksum valido";
+  LAB_DUMPCARD = "Dumpa una Conquest Card";
+  CAP_DUMPCARD = "Clona il contenuto della Card su un file";
+  LAB_CREDITS = "Crediti";
+  CAP_CREDITS = "Visualizza i crediti del programma e la data di compilazione";
+  FEATURE_NOT_YET_AVAILABLE = "Funzione non ancora disponibile";
+
+  LAB_SWAPCARD =  "Swappa la Memory Card";
+  CREATING_NEW_CARD = "Sto creando una nuova Conquest Card";
+  CREATING_DUMPFILE = "Sto creando un file di dump";
+  DUMPING = "Dumping...";
+  VERIFYING_CARD = "Sto verificando la Conquest Card...";
+  CARD_CHANGER = "Cambio Card";
+  CHANGE_MC1_NOW = "Sostituisci la Card sulla porta 2 proprio ora";
+  CARDCHANGE_SELECT2PROCEED = "quando sei pronto, premi SELECT per avviare";
+  CURRENT_CARD = "Card attualmente in utilizzo:";
+  CARD_UNUSABLE = "La Card NON è adatta allo scopo";
+  NOT_PS2MC = "Non è una Card PS2";
+  NOTHING_CONNECTED = "Nulla di inserito";
+  STARTING_OVERRIDE = "Sto iniziando il processo di sovrascrittura della Card";
+  WARNING_HEADING = "ATTENZIONE!!!";
+  NOT_A_CONQUEST_CARD = "La Card in utilizzo NON è una Conquest Card";
+  SPECIAL_FORMAT_INSTRUCTIONS = {
+    "A causa del formato unico e particolare delle Conquest Cards",
+    "vengono utilizzati metodi speciali per accedervi",
+    "Per semplicità di progettazione, questo programma gestirà solo la Card trovata sulla porta 2",
+    "Rimuovere/inserire una Card solo quando il programma lo richiede o premendo Select nel menu principale",
+  };
+  CONQUEST_CARD_VERIF = "Verifica della Conquest Card";
+  SUCCESS_VERIFY = "La verifica è avvenuta con successo!";
+  SUCCESS_VERIFYC = "Tutti i blocchi sono stati verificati con successo";
+  VERIFSUMMARY_HEADING = "Rapporto di verifica della Conquest Card";
+  CONVERTION_FINISHED = "Conversione terminata";
+  CONVERTION_CONFIRM = "Procedo alla conversione?";
+  THIS_WILL_WIPE_CARD = "TUTTI i dati attualmente presenti nella card andranno persi";
+  OFFER_LOGFILE = "troppe discrepanze da poterle elencare a video";
+  OFFER_LOGFILE1 = "puoi premere X per scrivere un file di testo con un elenco di ogni mancata corrispondenza registrata";
+
+  FMT_PAGES_PER_BLOCK = "Pagine per Blocco: 0x%X";
+  FMT_CARDFLAGS = "Flags sulla Card: 0x%X";
+  FMT_PAGES_IN_CARD = "Pagine sulla Card: 0x%X";
+  FMT_PAGESIZE = "Grandezza di Pagina: 0x%X";
+
+  MISMATCHES_DO_NOT_MEAN_UNUSABLE = "Ciò non vuol dire che questa Conquest Card sia danneggiata\nAlcune Conquest Card originali funzionanti presentano delle discrepanze di checksum su alcuni blocchi\nLe discrepanze in rosso appartengono alle pagine lette dal gioco quando si verifica se la carta è valida";
+
+  FMT_ERR_PAGEMISMATCHES = "%d le pagine della Card hanno un checksum non corrispondente";
+
+  FMT_IOERR_ERASINGPAGE = "Errore I/O nella cancellazione di pagina %d";
+  FMT_IOERR_WRITEPAGE = "Errore I/O Error nella scrittura di pagina %d";
+
+  ERR_INVALID_CARDMATERIAL_SIZE = "grandezza non valida per il 'cardmaterial.bin'";
+
+  ERR_DAEMON_MISSING = {
+    "ERRORE FATALE",
+    "Impossibile caricare il driver di controllo del dongle di sicurezza 'rom0:DAEMON'",
+    "per la sicurezza delle tue memory cards, questo programma non può continuare",
+    "questa unità si sta per riavviare",
+    "se il problema persiste, contatta El_isra",
+    "puoi contattarlo su Discord in PS2 Space utilizzando il QR qui sotto",
+  };
+
+  ERR_MISSINGDONGLE = {
+    "Dongle di sicurezza non trovato",
+    "non è possibile convertire la card se il dongle di sicurezza non è inserito",
+  };
+
+  FMT_VERIFSUMMARY = "pagina %05d: Checksum 0x%08X | Checksum Dichiarato 0x%08X";
+
+  TRANSLATORNAME = "Francesco-75";
+}
