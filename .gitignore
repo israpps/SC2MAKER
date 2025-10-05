@@ -34,6 +34,7 @@ bin/System/noindex.lua
 *.a
 *.irx
 !embed/iop/*
+!bin/*.ttf
 obj/
 asm/
 bin/dumpcard_*.bin

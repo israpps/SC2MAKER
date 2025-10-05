@@ -106,7 +106,7 @@ all: $(EXT_LIBS) $(EE_BIN)
 
 pack: $(EE_BIN_PKD)
 	rm -f $(PACKNAME).7z
-	7z a -t7z $(PACKNAME).7z README.MD LICENSE $(EE_BIN_PKD) bin/cardmaterial.bin bin/font.ttf bin/*.lua bin/common/* bin/lang/*
+	7z a -t7z $(PACKNAME).7z README.md LICENSE $(EE_BIN_PKD) bin/cardmaterial.bin bin/font.ttf bin/*.lua bin/common/* bin/lang/*
 	7z rn $(PACKNAME).7z bin $(PACKNAME)_$(shell date "+%d-%m-%Y")
 
 $(EE_ASM_DIR)boot.c: etc/boot.lua | $(EE_ASM_DIR)
