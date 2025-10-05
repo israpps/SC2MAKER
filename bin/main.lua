@@ -2,6 +2,8 @@ print("main.lua begins...")
 print("SC2MAKER Ver: ", __VERSION__, " Compilation date ", __DATE__, " ", __TIME__, " Commit:", __GITHASH__)
 package.path = "?.lua"
 
+Conquest.rpcbind()
+
 S = {
   X=704;
   Y=480;
@@ -9,8 +11,10 @@ S = {
 
 S.XM=S.X/2;
 S.YM=S.Y/2;
+
 local V = Screen.getMode()
 Screen.setMode(V.mode, S.X, S.Y, V.colorMode, V.interlace, V.field)
+
 if doesFileExist("lng/override.lng") then
   dofile("lang/override.lng")
 else
@@ -22,8 +26,6 @@ if type(LNG) ~= "table" then
 end
 require("assets")
 
-System.getMCInfo(0)
-
 CN = {--GENERAL CONSTANTS
   MC_normal = 1;
   MC_conquest = 2;
@@ -34,9 +36,6 @@ CN = {--GENERAL CONSTANTS
   MC_PAGESIZE_NECC = 0x200;
   MC_PAGESIZE_ECC = 0x210;
 }
-print("rpcbind SC2Service")
-Conquest.rpcbind()
-
 
 function Font.ftPrintMultiLineAligned(font, x, y, spacing, width, height, text, color)
   local internal_y = y
@@ -413,9 +412,10 @@ function Greeting2(i, f)
   Font.ftPrint(FNT[3], S.XM, 150, 8, S.X, S.Y, LNG.SPECIAL_FORMAT_INSTRUCTIONS[1], C1)
   Font.ftPrint(FNT[3], S.XM, 170, 8, S.X, S.Y, LNG.SPECIAL_FORMAT_INSTRUCTIONS[2], C1)
   Font.ftPrint(FNT[3], S.XM, 200, 8, S.X, S.Y, LNG.SPECIAL_FORMAT_INSTRUCTIONS[4], C1)
-  Font.ftPrint(FNT[3], S.XM, 220, 8, S.X, S.Y, LNG.SPECIAL_FORMAT_INSTRUCTIONS[3], C1)
   if not console_is_arcade then
     Font.ftPrintMultiLineAligned(FNT[3], S.XM, 250, 20, S.X, S.Y, LNG.ARCADE_KEYS_NOTICE, C1)
+  else
+    Font.ftPrint(FNT[3], S.XM, 250, 8, S.X, S.Y, LNG.SPECIAL_FORMAT_INSTRUCTIONS[3], C1)
   end
 end
 
