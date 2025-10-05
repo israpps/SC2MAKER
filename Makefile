@@ -1,32 +1,25 @@
 .SILENT:
 
 define HEADER
-
-   @@@@@@@@*#
-  @@@# @@@@@@@ @@@@%
-   @@@.@@@@@@@@@@@@@@@@@@*       &&&&&&&.
-     ,@@@@@@@@        @@@@@@&&&&&&&&&&&&&&&&
-       *@@@@@@@          &&&&&&&&&@&&&&&&&&&&&&
-          @@@@@@@      &&&&&&&&@@@@@@@@&&&&&&&&&&       @@@@@@
-             /@@@@@   &&&&&&@@@@@@@@@@@@@@&&&&  &&&   @@@@@@@@@@
-                 @@@@@@&&&&@@@@@@@@@@@@@@@@@@     &&  @@@@@@@@@@
-                    @@&@@@&&@@@@@@@@@@@@@@@@@      && @@@@@@@@@@
-                     &&&@@@@@@&@@@@@@@@@@@@@@@    &&&   @@@@@@.
-                      &&&&&@@@@@@&&@@@@@@@@@@@@@&&&&&
-                      &&&&&&&@@@@@@@@@@@@@@@@@@&&&&&&@@@
-                       (&&&&&&&@@@@&@@@@@@@@@@&&&&&& #@@@@@.
-                         &&&&&&&&&@@@@@&&@@@&&&&&&&     @@@@@@/
-                           &&&&&&&&@@@@@@@@@&&&&&         @@@@@@@
-                              &&&&&&&&&&&&@@@@@@@@@        @@@@@@@@,
-                                   &&&&&&&,     @@@@@@@@@@@@@@@@@@@@@@
-                                                        &@@@@ @@@@@@@.
+ _____ _____  _____ ___  ___      _
+/  ___/  __ \/ __  \|  \/  |     | |
+\ `--.| /  \/`' / /'| .  . | __ _| | _____ _ __
+ `--. \ |      / /  | |\/| |/ _` | |/ / _ \ '__|
+/\__/ / \__/\./ /___| |  | | (_| |   <  __/ |
+\____/ \____/\_____/\_|  |_/\__,_|_|\_\___|_|
 
 
-                            Enceladus project
+                    SoulCalibur2 Conquest Card Maker
 
 endef
 export HEADER
 
+MAJOR=1
+MINOR=0
+PATCH=0
+PROGVER=$(MAJOR).$(MINOR).$(PATCH)
+PACKNAME=SC2Maker_v$(PROGVER)
+GITHASH=$(shell git rev-parse --short HEAD)
 #------------------------------------------------------------------#
 #----------------------- Configuration flags ----------------------#
 #------------------------------------------------------------------#
@@ -45,23 +38,26 @@ EE_BIN_PKD = $(BINDIR)sc2maker_pkd.elf
 
 EE_LIBS = -L$(PS2SDK)/ports/lib -L$(PS2DEV)/gsKit/lib/ -Lmodules/ds34bt/ee/ -Lmodules/ds34usb/ee/ \
 	-lpatches -lfileXio -lpad -ldebug -llua -lmath3d -ljpeg -lfreetype -lgskit_toolkit -lgskit -ldmakit \
-	-lpng -lz -lmc -laudsrv -lelf-loader -lds34bt -lds34usb
+	-lpng -lz -lmc -laudsrv -lelf-loader -lds34bt -lds34usb -liopreboot
 
 EE_INCS += -I$(PS2DEV)/gsKit/include -I$(PS2SDK)/ports/include -I$(PS2SDK)/ports/include/freetype2 -I$(PS2SDK)/ports/include/zlib
 
 EE_INCS += -Imodules/ds34bt/ee -Imodules/ds34usb/ee
 
-EE_CFLAGS   += -Wno-sign-compare -fno-strict-aliasing -fno-exceptions -DLUA_USE_PS2
-EE_CXXFLAGS += -Wno-sign-compare -fno-strict-aliasing -fno-exceptions -DLUA_USE_PS2
+EE_CFLAGS   += -Wno-sign-compare -fno-strict-aliasing -fno-exceptions -DLUA_USE_PS2 -DPROGVER=\"$(PROGVER)\" -DGITHASH=\"$(GITHASH)\"
+EE_CXXFLAGS += -Wno-sign-compare -fno-strict-aliasing -fno-exceptions -DLUA_USE_PS2 -DPROGVER=\"$(PROGVER)\" -DGITHASH=\"$(GITHASH)\"
 
 ifeq ($(RESET_IOP),1)
-EE_CXXFLAGS += -DRESET_IOP
+  EE_CXXFLAGS += -DRESET_IOP
+endif
+
+ifeq ($(MECHAEMU),1)
+  EE_CXXFLAGS += -DMECHAEMU
 endif
 
 ifeq ($(DEBUG),1)
-EE_CXXFLAGS += -DDEBUG
+  EE_CXXFLAGS += -DDEBUG
 endif
-
 
 BIN2S = $(PS2SDK)/bin/bin2c
 .PHONY: modules/dongleman_conquest/ modules/conquestserv/
@@ -77,9 +73,10 @@ LUA_LIBS =	luaplayer.o luasound.o luacontrols.o \
 			luasystem.o luaRender.o
 
 IOP_MODULES = iomanX.o fileXio.o \
-			  sio2man.o dongleman_conquest.o conquest_server.o mcserv.o padman.o libsd.o \
+			  sio2man.o dongleman_conquest.o dongleman_conquest_arcade.o conquest_server.o mcserv.o padman.o libsd.o \
 			  usbd.o audsrv.o bdm.o bdmfs_fatfs.o \
-			  usbmass_bd.o cdfs.o ds34bt.o ds34usb.o mmceman.o
+			  usbmass_bd.o cdfs.o ds34bt.o ds34usb.o mmceman.o \
+			  ioprp_arcade.o ioprp_mechaemu.o
 
 EMBEDDED_RSC = boot.o
 
@@ -107,12 +104,20 @@ all: $(EXT_LIBS) $(EE_BIN)
 
 #--------------------- Embedded ressources ------------------------#
 
+pack: all
+	rm -f $(PACKNAME).7z
+	7z a -t7z $(PACKNAME).7z README.MD LICENSE $(EE_BIN_PKD) bin/cardmaterial.bin bin/font.ttf bin/*.lua bin/common/* bin/lang/*
+	7z rn $(PACKNAME).7z bin $(PACKNAME)_$(shell date "+%d-%m-%Y")
+
 $(EE_ASM_DIR)boot.c: etc/boot.lua | $(EE_ASM_DIR)
 	$(BIN2S) $< $@ bootString
 
 # Images
 EMBED/%.s: EMBED/%.png
 	$(BIN2S) $< $@ $(shell basename $< .png)
+# Images
+$(EE_ASM_DIR)%.c: embed/iop/%.img
+	bin2c $< $@ $(shell basename $< .img)
 #------------------------------------------------------------------#
 
 
@@ -144,7 +149,8 @@ modules/ds34usb/iop/ds34usb.irx: modules/ds34usb/iop
 	$(MAKE) -C $<
 
 modules/dongleman_conquest/:
-	$(MAKE) -C $@
+	$(MAKE) -C $@ clean all
+	$(MAKE) -C $@ clean all MCMAN_BUILDING_DONGLEMAN=1
 
 modules/conquestserv/:
 	$(MAKE) -C $@

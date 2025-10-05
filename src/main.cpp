@@ -7,6 +7,7 @@
 #include <libcdvd.h>
 #include <iopheap.h>
 #include <iopcontrol.h>
+#include <iopcontrol_special.h>
 #include <smod.h>
 #include <audsrv.h>
 #include <sys/stat.h>
@@ -37,10 +38,14 @@ extern unsigned int size_bootString;
     extern unsigned char _T[]; \
     extern unsigned int size_##_T
 
+IMPORT_BIN2C(ioprp_arcade);
+IMPORT_BIN2C(ioprp_mechaemu);
+
 IMPORT_BIN2C(iomanX_irx);
 IMPORT_BIN2C(fileXio_irx);
 IMPORT_BIN2C(sio2man_irx);
 IMPORT_BIN2C(dongleman_conquest_irx);
+IMPORT_BIN2C(dongleman_conquest_arcade_irx);
 IMPORT_BIN2C(conquest_server_irx);
 IMPORT_BIN2C(mmceman_irx);
 IMPORT_BIN2C(mcserv_irx);
@@ -56,6 +61,8 @@ IMPORT_BIN2C(ds34usb_irx);
 IMPORT_BIN2C(ds34bt_irx);
 
 char boot_path[255];
+
+int console_is_arcade = 0;
 
 void initMC(void)
 {
@@ -76,8 +83,8 @@ void initMC(void)
 
    // Since this is the first call, -1 should be returned.
    // makes me sure that next ones will work !
-   mcGetInfo(0, 0, &mc_Type, &mc_Free, &mc_Format);
-   mcSync(MC_WAIT, NULL, &ret);
+   //mcGetInfo(0, 0, &mc_Type, &mc_Free, &mc_Format);
+   //mcSync(MC_WAIT, NULL, &ret);
 }
 
 #ifdef DONT_LOAD_FILEXIO_ON_HOST_DEVICE
@@ -95,14 +102,6 @@ int main(int argc, char * argv[])
 {
     int ID, RET;
     const char * errMsg;
-
-    #ifdef RESET_IOP
-    SifInitRpc(0);
-    while (!SifIopReset("", 0)){};
-    while (!SifIopSync()){};
-    SifInitRpc(0);
-    #endif
-
     // install sbv patch fix
     printf("Installing SBV Patches...\n");
     sbv_patch_enable_lmb();
@@ -124,7 +123,13 @@ int main(int argc, char * argv[])
 #endif
 
     LOAD_IRX_NARG(sio2man_irx);
-    LOAD_IRX_NARG(dongleman_conquest_irx);
+    if (console_is_arcade) {
+        LOAD_IRX_NARG(dongleman_conquest_arcade_irx);
+        ID = SifLoadStartModule("rom0:DAEMON", 0, NULL, &RET);
+        printf("DAEMON id %d, ret %d\n", ID, RET);
+    } else {
+        LOAD_IRX_NARG(dongleman_conquest_irx);
+    }
     LOAD_IRX_NARG(conquest_server_irx);
     LOAD_IRX_NARG(mcserv_irx);
     LOAD_IRX_NARG(mmceman_irx);
@@ -216,3 +221,34 @@ int main(int argc, char * argv[])
 	return 0;
 }
 
+#include <smem.h>
+#include <sio.h>
+#include <smod.h>
+extern smod_mod_info_t* curr;
+extern smod_mod_info_t* GetIRXInfoByName(const char* name);
+
+#if defined(__cplusplus) //If you don't extern "C". the libc code will never call this function on a C++ program
+extern "C" {
+#endif
+void _ps2sdk_memory_init() {
+    SifInitRpc(0);
+    if (GetIRXInfoByName("arcade_device_service")) {
+        /// Arcade PS2: replace FILEIO and load CDVDFSV to avoid black screen on libc init
+        console_is_arcade = 1;
+        while (!SifIopRebootBuffer(ioprp_arcade, size_ioprp_arcade)) {}; //replace FILEIO
+        while (!SifIopSync()) {};
+        SifLoadStartModule("rom0:CDVDFSV", 0, NULL, NULL);
+    } else {
+        /// Retail PS2: Replace secrman with dedicated secrman_mechaemu. to make the game
+#ifndef MECHAEMU
+        while (!SifIopReset("", 0)){};
+#else
+        while (!SifIopRebootBuffer(ioprp_mechaemu, size_ioprp_mechaemu)) {};
+#endif
+        while (!SifIopSync()){};
+    }
+    SifInitRpc(0);
+}
+#if defined(__cplusplus)
+}
+#endif

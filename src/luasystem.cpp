@@ -704,6 +704,83 @@ static int lua_getfileprogress(lua_State *L) {
 	return 1;
 }
 
+#include <smem.h>
+#include <sio.h>
+#include <smod.h>
+
+smod_mod_info_t* curr = NULL;
+smod_mod_info_t* GetIRXInfoByName(const char* name) {
+    smod_mod_info_t info;
+    curr = NULL;
+    char sName[32+1];
+    int rv;
+    while ((rv = smod_get_next_mod(curr, &info)) != 0) {
+        curr = &info;
+        if (curr == NULL) continue;
+        smem_read(info.name, sName, 32);
+        sName[32] = 0;
+        sio_puts(sName);
+        if (!strcmp(name, sName)) {
+            return curr;
+        }
+    }
+    return NULL;
+}
+
+static int lua_searchmod(lua_State *L)
+{
+	int argc = lua_gettop(L);
+	if (argc != 1) return luaL_error(L, "Argument error: need a module name for search");
+
+	const char* mod = luaL_checkstring(L, 1);
+	smod_mod_info_t* T = GetIRXInfoByName(mod);
+	if (T) {
+		lua_newtable(L);
+
+		lua_pushstring(L, "version");
+		lua_pushinteger(L, T->version);
+		lua_settable(L, -3);
+
+		lua_pushstring(L, "id");
+		lua_pushinteger(L, T->id);
+		lua_settable(L, -3);
+
+		lua_pushstring(L, "format");
+		lua_pushstring(L, mod);
+		lua_settable(L, -3);
+
+	} else lua_pushnil(L);
+
+	return 1;  /* table is already on top */
+}
+
+static uint32_t conquest_hash(const uint8_t *data, size_t len) {
+    uint32_t crc = 0x00000000U;
+    for (size_t i = 0; i < len; i++) {
+        crc ^= ((uint32_t)data[i]) << 24;
+        for (int b = 0; b < 8; b++) {
+            if (crc & 0x80000000U) {
+                crc = (crc << 1) ^ 0x04C11DB7U;
+            } else {
+                crc <<= 1;
+            }
+        }
+    }
+    return (crc != 0xE76D8BF0) ? crc : 0xFFFFFFFF;//0xE76D8BF0 is the crc of 512 consecutive FF bytes, thats an non initialized card page. on those, the ECC must be 0xFF filled too
+}
+
+static int lua_crcstring(lua_State *L){
+	int argc = lua_gettop(L);
+	if (argc != 1) return luaL_error(L, "wrong number of arguments");
+	size_t lenn;
+	const char *text = luaL_checklstring(L, 1, &lenn);
+	if (text && lenn > 0)
+		lua_pushinteger(L, conquest_hash((const u8*)text, lenn));
+	else
+		lua_pushnil(L);
+	return 1;
+}
+
 static const luaL_Reg System_functions[] = {
 	{"openFile",                   lua_openfile},
 	{"readFile",                   lua_readfile},
@@ -732,6 +809,8 @@ static const luaL_Reg System_functions[] = {
 	{"checkValidDisc",       lua_checkValidDisc},
 	{"getDiscType",             lua_getDiscType},
 	{"checkDiscTray",         lua_checkDiscTray},
+	{"GetIRXInformation",         lua_searchmod},
+	{"CRCStr",         			  lua_crcstring},
 	{0, 0}
 };
 
@@ -793,21 +872,6 @@ static SifRpcClientData_t sc2_rpc;
 int rpc_initialized = 0;
 #define CHECK_RPC_INIT() if (!rpc_initialized) {printf("Attempt to call conquest manager while RPC server is not connected\n"); return -2;}
 #define RPCBUFF_PARAMS(pkt) &pkt, sizeof(pkt), &pkt, sizeof(pkt)
-
-static uint32_t conquest_hash(const uint8_t *data, size_t len) {
-    uint32_t crc = 0x00000000U;
-    for (size_t i = 0; i < len; i++) {
-        crc ^= ((uint32_t)data[i]) << 24;
-        for (int b = 0; b < 8; b++) {
-            if (crc & 0x80000000U) {
-                crc = (crc << 1) ^ 0x04C11DB7U;
-            } else {
-                crc <<= 1;
-            }
-        }
-    }
-    return (crc != 0xE76D8BF0) ? crc : 0xFFFFFFFF;//0xE76D8BF0 is the crc of 512 consecutive FF bytes, thats an non initialized card page. on those, the ECC must be 0xFF filled too
-}
 
 static int sc2_rpcbind(lua_State *L){
     if (rpc_initialized) {
@@ -942,9 +1006,9 @@ static int sc2_writepage(lua_State *L) {
 		return luaL_error(L, "Invalid size buffer on card page write operation\n\tAborting just in case...");
 	}
 	memcpy(pkt.page.full, newpagedata, MEMORYCARD_PAGESIZE);
+	memset(pkt.page.split.ecc, 0xFF, MEMORYCARD_ECCSIZE);
 	uint32_t crc = conquest_hash(pkt.page.full, MEMORYCARD_PAGESIZE);
 	//to keep the data size to be moved, we skip ECC from the material Image and regenerte on real time before writing
-	memset(pkt.page.split.ecc, 0xFF, MEMORYCARD_ECCSIZE);
 	pkt.page.split.ecc[0] = (crc >> 24) & 0xFF;
     pkt.page.split.ecc[1] = (crc >> 16) & 0xFF;
     pkt.page.split.ecc[2] = (crc >> 8)  & 0xFF;
@@ -1034,10 +1098,9 @@ static int sc2_verifypage(lua_State *L) {
         return 1;
     }
 	if (pkt.ret == 1) {
-		uint32_t calchash = conquest_hash(pkt.page.full, MEMORYCARD_PAGESIZE);
+		uint32_t calchash = conquest_hash(&pkt.page.full[0], MEMORYCARD_PAGESIZE);
 		u8* b = &pkt.page.full[MEMORYCARD_PAGESIZE];
 		uint32_t localhash = (b[0] << 24 | (b[1] << 16) | (b[2] << 8) | (b[3]));//flip it
-		printf("%08X %08X\n", calchash, localhash);
 		lua_pushinteger(L, calchash);
 		lua_pushinteger(L, localhash);
 	} else {
@@ -1148,6 +1211,22 @@ void luaSystem_init(lua_State *L) {
 
 	lua_pushinteger(L, O_WRONLY);
 	lua_setglobal (L, "FWRITE");
+
+	lua_pushstring(L, __DATE__);
+	lua_setglobal (L, "__DATE__");
+
+	lua_pushstring(L, __TIME__);
+	lua_setglobal (L, "__TIME__");
+
+	lua_pushstring(L, GITHASH);
+	lua_setglobal (L, "__GITHASH__");
+
+	lua_pushstring(L, PROGVER);
+	lua_setglobal (L, "__VERSION__");
+
+	extern int console_is_arcade;
+	lua_pushboolean(L, (bool)(console_is_arcade != 0));
+	lua_setglobal(L, "console_is_arcade");
 
 	lua_pushinteger(L, O_CREAT | O_WRONLY);
 	lua_setglobal(L, "FCREATE");

@@ -2,12 +2,12 @@
 LNG = {
   PROGTITLE = "Conquest Card Manager";
   CREDITS = {
-    "Coded by El_isra. Created using Enceladus, By Daniel Sant0s",
-    "Special thanks to:",
+    "Escrito por El_isra. Creado usando Enceladus, De Daniel Sant0s",
+    "Agradecimientos a:",
     "Uyjulian, l_oliveira, krHACKen, DiscoStarslayer",
     "extraweb1, bbsan2k, smb123w64gb, derole, qnox32",
-    "kuze and an annonymus person, for donating their conquest cards",
-    "everyone who shared their conquest card dumps",
+    "kuze y una persona anonima, por donar sus tarjetas de conquista",
+    "todos los que compartieron volcados de tarjetas de conquista",
   };
 
   ARCADE_KEYS_NOTICE = "This program will only detect official Cards that support Arcade Magicgate\nEnsuring the card you convert will be accepted by the System246";
@@ -42,7 +42,7 @@ LNG = {
   NOT_A_CONQUEST_CARD = "Current Card is NOT a Conquest Card";
   SPECIAL_FORMAT_INSTRUCTIONS = {
     "Due to the unique format of the conquest cards",
-    "special methods for accessing them are being used",
+    "special methods for accessing it are being used",
     "For design simplicity, this program will handle the card found on port 2 only",
     "Only remove/insert a card when program asks to do it or by pressing select on the main menu",
   };
@@ -86,6 +86,6 @@ LNG = {
 
   FMT_VERIFSUMMARY = "page %05d: Checksum 0x%08X | Declared Checksum 0x%08X";
 
-  TRANSLATORNAME = nil;
+  TRANSLATORNAME = "El_isra";
 }
 

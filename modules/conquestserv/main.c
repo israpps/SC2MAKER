@@ -1,6 +1,5 @@
 #include "irx_imports.h"
 #include "conquest_service.h"
-#define DEBUG
 #define MODNAME "SC2mcserv"
 #define MAJOR 1
 #define MINOR 0

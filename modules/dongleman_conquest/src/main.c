@@ -103,7 +103,7 @@ static const u8 mcman_xortable[256] = {
 };
 // clang-format on
 
-#ifndef NO_SEMA_HAKAMA
+#if defined(BUILDING_DONGLEMAN) || defined(CONQUEST_CARD)
 int sema_hakama_id = 0;
 #endif
 
@@ -163,6 +163,9 @@ int MCMAN_ENTRYPOINT(int argc, char *argv[])
 	printf("mcman startup"
 #ifdef CONQUEST_CARD
         " <CONQUEST CARD SUPPORT ON> "
+#endif
+#ifdef BUILDING_DONGLEMAN
+        " <DONGLEMAN SUPPORT ON> "
 #endif
         "\n");
 
@@ -541,7 +544,7 @@ int McDetectCard2(int port, int slot) // Export #21 XMCMAN only
 	register int r;
 	register MCDevInfo *mcdi;
 
-	DPRINTF("McDetectCard2 port%d slot%d\n", port, slot);
+	printf("%s(%d, %d)\n", __FUNCTION__, port, slot);
 
 	mcdi = (MCDevInfo *)&mcman_devinfos[port][slot];
 
@@ -1170,8 +1173,6 @@ int McReadPage(int port, int slot, int page, void *buf) // Export #18
 	u8 eccbuf[32];
 	u8 *pdata, *peccb;
 
-    HAKAMA_WAITSEMA();
-
 	count = (mcdi->pagesize + 127) >> 7;
 	erase_byte = (mcdi->cardflags & CF_ERASE_ZEROES) ? 0x0 : 0xFF;
 
@@ -1212,8 +1213,6 @@ int McReadPage(int port, int slot, int page, void *buf) // Export #18
 			}
 		}
 	} while (++retries < 5);
-
-    HAKAMA_SIGNALSEMA();
 
 	if (retries < 5)
 		return sceMcResSucceed;

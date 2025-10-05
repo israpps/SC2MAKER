@@ -1,0 +1,89 @@
+LNG = {
+  PROGTITLE = "Gerenciador de cartões de conquista";
+  CREDITS = {
+    "Codificado por El_isra. Criado usando Enceladus, por Daniel Sant0s",
+    "Agradecimentos especiais a:",
+    "Uyjulian, l_oliveira, krHACKen, DiscoStarslayer",
+    "extraweb1, bbsan2k, smb123w64gb, derole, qnox32",
+    "kuze e uma pessoa anônima, por doar seus cartões de conquista",
+    "todos que compartilharam seus dumps de cartões de conquista",
+  };
+
+  ARCADE_KEYS_NOTICE = "Este programa só detectará cartões oficiais que suportem Arcade Magicgate\nGarantindo que o cartão que você converter será aceite pelo System246";
+  CONTINUE = "Continuar";
+  CANCEL = "Cancelar";
+  LAB_CONVERTCARD = "Conversão de Cartão de Conquista";
+  CAP_CONVERTCARD = "Converta um cartão de memória normal em um cartão de conquista";
+  LAB_REPAIRCARD = "Reparação de Cartão de Conquista";
+  CAP_REPAIRCARD = "Reparar um cartão de conquista existente que está danificado";
+  LAB_CHECKCARD = "Verificação de integridade do cartão Conquista";
+  CAP_CHECKCARD = "Verifica se todos os blocos do cartão de memória têm um checksum válido";
+  LAB_DUMPCARD = "Dump cartão de conquista";
+  CAP_DUMPCARD = "Dump o conteúdo do cartão em um arquivo";
+  LAB_CREDITS = "Creditos";
+  CAP_CREDITS = "Exibir créditos do programa e data de compilação";
+  FEATURE_NOT_YET_AVAILABLE = "Recurso ainda não disponível";
+
+  LAB_SWAPCARD =  "Trocar cartão de memória";
+  CREATING_NEW_CARD = "Criando um novo Cartão de Conquista";
+  CREATING_DUMPFILE = "Criando um dump";
+  DUMPING = "Dumping...";
+  VERIFYING_CARD = "Verificando seu Cartão de Conquista...";
+  CARD_CHANGER = "Trocar cartão";
+  CHANGE_MC1_NOW = "Troque o cartão na porta 2 agora";
+  CARDCHANGE_SELECT2PROCEED = "quando terminar, pressione SELECT para prosseguir";
+  CURRENT_CARD = "Cartão Atual:";
+  CARD_UNUSABLE = "Cartão NÃO é compatível";
+  NOT_PS2MC = "Não é um cartão de memória PS2";
+  NOTHING_CONNECTED = "Nada conectado";
+  STARTING_OVERRIDE = "Progresso da substituição do cartão inicial";
+  WARNING_HEADING = "AVISO!!!";
+  NOT_A_CONQUEST_CARD = "A cartão atual NÃO é um cartão de conquista";
+  SPECIAL_FORMAT_INSTRUCTIONS = {
+    "Devido ao formato único dos cartões de conquista",
+    "métodos especiais para acessá-los estão sendo usados",
+    "Para simplificar o design, este programa manipulará apenas o cartão encontrado na porta 2",
+    "Remova/insira o cartão somente quando o programa solicitar ou pressionando SELECT no menu",
+  };
+  CONQUEST_CARD_VERIF = "Verificação de Cartão de Conquista";
+  SUCCESS_VERIFY = "A verificação foi um sucesso!";
+  SUCCESS_VERIFYC = "Todos os blocos foram verificados com sucesso";
+  VERIFSUMMARY_HEADING = "Relatório de verificação do cartão de Conquista";
+  CONVERTION_FINISHED = "Conversão concluída";
+  CONVERTION_CONFIRM = "Prosseguir com a conversão?";
+  THIS_WILL_WIPE_CARD = "TODOS os dados armazenados atualmente no cartão serão perdidos";
+  OFFER_LOGFILE = "muitos erros para imprimir na tela";
+  OFFER_LOGFILE1 = "agora você pode pressionar X para escrever um arquivo de texto com uma lista de cada erro registrado";
+
+  FMT_PAGES_PER_BLOCK = "Páginas por bloco: 0x%X";
+  FMT_CARDFLAGS = "Flags do cartão: 0x%X";
+  FMT_PAGES_IN_CARD = "Páginas no cartão: 0x%X";
+  FMT_PAGESIZE = "Tamanho da página: 0x%X";
+
+  MISMATCHES_DO_NOT_MEAN_UNUSABLE = "Isso não significa que este cartão de conquista esteja danificado\nAlgumas cartas de conquista originais funcionais apresentam incompatibilidades de soma de verificação em alguns blocos\nas incompatibilidades em vermelho pertencem às páginas lidas pelo jogo ao verificar se o cartão é válido";
+
+  FMT_ERR_PAGEMISMATCHES = "%d as páginas do cartão têm uma erro de checksum";
+
+  FMT_IOERR_ERASINGPAGE = "I/O Erro ao apagar página %d";
+  FMT_IOERR_WRITEPAGE = "I/O Erro ao escrever página %d";
+
+  ERR_INVALID_CARDMATERIAL_SIZE = "tamanho inválido para 'cardmaterial.bin'";
+
+  ERR_DAEMON_MISSING = {
+    "ERRO FATAL",
+    "O driver do verificador de dongle de segurança 'rom0:DAEMON' falhou ao carregar",
+    "para a segurança dos seus cartões de memória, este programa não pode continuar",
+    "esta unidade irá reiniciar a qualquer momento",
+    "se o problema persistir, entre em contato com El_isra",
+    "você pode contatá-lo pelo Discord PS2 Space com o QR abaixo",
+  };
+
+  ERR_MISSINGDONGLE = {
+    "Dongle de segurança não encontrado",
+    "não é possível converter o cartão se o dongle não estiver conectado",
+  };
+
+  FMT_VERIFSUMMARY = "pagina %05d: Checksum 0x%08X | Checksum Declarado 0x%08X";
+
+  TRANSLATORNAME = "nuno6573";
+}

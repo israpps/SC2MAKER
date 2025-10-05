@@ -64,7 +64,8 @@
     "_720p",
     "Conquest",
     "TRUNC",
-    "doesFileExist"
+    "doesFileExist",
+    "console_is_arcade"
   ],
   "files.associations": {
     "*.make": "makefile",

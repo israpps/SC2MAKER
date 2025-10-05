@@ -4,7 +4,12 @@
 #define _HAKAMA_SIGNALSEMA() SignalSema(sema_hakama_id)
 #define _HAKAMA_WAITSEMA() WaitSema(sema_hakama_id)
 
+#ifndef DEBUG
+#define SCPRINTF(x...)
+#else
 #define SCPRINTF(format, args...) printf("sc2: " format, ##args)
+#endif
+
 void set_conquest_transfer_methods();
 void conquest_set_terminator(int port, int slot, int term);
 void conquest_eraseblock(int port, int slot, u8 page);

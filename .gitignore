@@ -36,3 +36,6 @@ bin/System/noindex.lua
 
 obj/
 asm/
+bin/dumpcard_*.bin
+bin/card_verification.log
+*.7z

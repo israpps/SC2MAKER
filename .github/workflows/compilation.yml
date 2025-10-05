@@ -41,24 +41,20 @@ jobs:
 
     - name: Compile project
       run: |
-        make clean all
-
-    - name: Get short SHA
-      id: slug
-      run: echo "::set-output name=sha8::$(echo ${GITHUB_SHA} | cut -c1-8)"
+        make clean all pack MECHAEMU=1
 
     - name: Upload artifacts
       if: ${{ success() }}
       uses: actions/upload-artifact@v4
       with:
-        name: Enceladus-${{ steps.slug.outputs.sha8 }}
-        path: bin
+        name: SC2Maker
+        path: SC2Maker.7z
 
     - name: Compress & Rename bin folder
       run: |
         mv bin/ Enceladus/
         tar -zcvf Enceladus.tar.gz Enceladus
- 
+
     - name: Create pre-release
       if: github.ref == 'refs/heads/main'
       uses: marvinpinto/action-automatic-releases@latest
@@ -67,13 +63,13 @@ jobs:
         automatic_release_tag: "latest"
         title: "Development build"
         files: |
-               Enceladus.tar.gz
+               SC2Maker.7z
 
     - name: Release
       if: startsWith(github.ref, 'refs/tags/')
       uses: softprops/action-gh-release@v1
       with:
-        files: Enceladus.tar.gz
+        files: SC2Maker.7z
         tag_name: ${{ steps.tag.outputs.VERSION }}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
