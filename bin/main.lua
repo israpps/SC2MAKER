@@ -18,7 +18,7 @@ Screen.setMode(V.mode, S.X, S.Y, V.colorMode, V.interlace, V.field)
 if doesFileExist("lng/override.lng") then
   dofile("lang/override.lng")
 else
-  dofile("lang/english.lua")
+  dofile("lang/english.lng")
 end
 
 if type(LNG) ~= "table" then
