@@ -1,0 +1,98 @@
+name: Issue report
+description: Create a report to help us improve
+title: "[ISSUE]: "
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ### Issue report form:
+
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Checks
+      description: "Check before posting"
+      options:
+        - label: I have checked [__existing issues__](https://github.com/israpps/SC2MAKER/issues) for duplicates and found none
+        - label: I am using a build downloaded from [this repository](https://github.com/israpps/SC2MAKER/releases)
+
+  - type: textarea
+    id: explanation
+    attributes:
+      label: Describe the issue
+      description: A clear and concise description of what the issue is.
+      placeholder: My issue is...
+    validations:
+      required: true
+
+  - type: markdown
+    attributes:
+      value: |
+        ### Program setup
+        > (please complete the following information):
+
+  - type: dropdown
+    id: console
+    attributes:
+      label: Arcade model
+      description: The arcade machine used to run SoulCalibur2
+      multiple: false
+      options:
+        - System246 Driving
+        - System246 Rack A
+        - System246 Rack B
+        - System246 Rack C
+        - System256
+    validations:
+      required: true
+
+  - type: input
+    id: converterver
+    attributes:
+      label: "Program version (if possible, also provide hash)"
+      description: "you can see it on the credits tab"
+      placeholder: "eg: v1.0.0. hash 41e4ebe"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: donglever
+    attributes:
+      label: "Version of the SoulCalibur2 Security Dongle used"
+      description: http://israpps.github.io/SCMAKER/game_media/#dongle
+      multiple: false
+      options:
+        - SC21, Ver.A
+        - SC21, Ver.C
+        - SC21, Ver.D
+        - SC22, Ver.A
+        - SC22, Ver.C
+        - SC22, Ver.D
+        - SC23, Ver.A
+        - SC23, Ver.C
+        - SC23, Ver.D
+    validations:
+      required: true
+
+  - type: dropdown
+    id: discver
+    attributes:
+      label: "Version of the SoulCalibur2 Disc used"
+      description: http://israpps.github.io/SCMAKER/game_media/#disc
+      multiple: false
+      options:
+        - SC21 DVD0
+        - SC21 DVD0B
+        - SC21 DVD0D
+    validations:
+      required: true
+
+  - type: textarea
+    id: context-and-data
+    attributes:
+      label: Context and extra information
+      description: Information about affected features and expected behavior
+      placeholder: "running the game under x circumstances cause z issue."
+    validations:
+      required: false
