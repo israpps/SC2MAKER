@@ -296,9 +296,10 @@ end
 function DumpConquestCard(port)
   local ret = 1
   ProgressDisplay(0,C.SWHITE, LNG.CREATING_DUMPFILE);
+  System.createDirectory("card_dumps")
   local filee = ""
   for i = 0, 32, 1 do
-    filee="dumpcard_"..i..".bin"
+    filee="card_dumps/dump"..i..".bin"
     if not doesFileExist(filee) then
       break
     end
