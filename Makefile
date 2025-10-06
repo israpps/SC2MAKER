@@ -112,6 +112,9 @@ pack: $(EE_BIN_PKD)
 $(EE_ASM_DIR)boot.c: etc/boot.lua | $(EE_ASM_DIR)
 	$(BIN2S) $< $@ bootString
 
+progver:
+	echo $(PROGVER)
+
 # Images
 EMBED/%.s: EMBED/%.png
 	$(BIN2S) $< $@ $(shell basename $< .png)

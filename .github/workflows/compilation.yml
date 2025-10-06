@@ -43,6 +43,10 @@ jobs:
       run: |
         make clean all pack MECHAEMU=1
 
+    - name: Get version
+      run: |
+        echo "PROGVER=$(make progver)" >> $GITHUB_ENV
+
     - name: Upload artifacts
       if: ${{ success() }}
       uses: actions/upload-artifact@v4
@@ -52,7 +56,7 @@ jobs:
 
     - name: Create pre-release
       if: github.ref == 'refs/heads/main'
-      uses: marvinpinto/action-automatic-releases@latest
+      uses: mathieucarbou/marvinpinto-action-automatic-releases@latest
       with:
         repo_token: "${{ secrets.GITHUB_TOKEN }}"
         automatic_release_tag: "latest"
@@ -61,10 +65,11 @@ jobs:
                SC2Maker_*.7z
 
     - name: Release
-      if: startsWith(github.ref, 'refs/tags/')
-      uses: softprops/action-gh-release@v1
+      if: startsWith(github.ref, 'refs/tags/v')
+      uses: mathieucarbou/marvinpinto-action-automatic-releases@latest
       with:
-        files: SC2Maker_*.7z
-        tag_name: ${{ steps.tag.outputs.VERSION }}
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        repo_token: "${{ secrets.GITHUB_TOKEN }}"
+        automatic_release_tag: "v${{ env.PROGVER }}"
+        title: "v${{ env.PROGVER }} Release"
+        files: |
+               SC2Maker_*.7z
