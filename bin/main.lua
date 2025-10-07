@@ -459,7 +459,7 @@ function ChecksumReport(reports)
     Font.ftPrint(FNT[2], S.XM, 120 , 8, S.X, S.Y, LNG.SUCCESS_VERIFYC)
   end
   Screen.flip()
-  while Pads.update() == 0 do end
+  while Pads.get() == 0 do end
 end
 
 function ConvertionReport(ret, retstr)
@@ -469,7 +469,7 @@ function ConvertionReport(ret, retstr)
   Font.ftPrint(FNT[1], S.XM, 50 , 8, S.X, S.Y, LNG.CONVERTION_FINISHED)
   Font.ftPrint(FNT[3], S.XM, 150 , 8, S.X, S.Y, retstr)
   Screen.flip()
-  while Pads.update() == 0 do
+  while Pads.get() == 0 do
   end
 end
 
