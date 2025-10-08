@@ -50,6 +50,7 @@ LNG = {
   SUCCESS_VERIFYC = "Todos os blocos foram verificados com sucesso";
   VERIFSUMMARY_HEADING = "Relatório de verificação do cartão de Conquista";
   CONVERTION_FINISHED = "Conversão concluída";
+  CONVERTION_FAILED = "erro de conversão!";
   CONVERTION_CONFIRM = "Prosseguir com a conversão?";
   THIS_WILL_WIPE_CARD = "TODOS os dados armazenados atualmente no cartão serão perdidos";
   OFFER_LOGFILE = "muitos erros para imprimir na tela";
@@ -84,6 +85,8 @@ LNG = {
   };
 
   FMT_VERIFSUMMARY = "pagina %05d: Checksum 0x%08X | Checksum Declarado 0x%08X";
+  VERIFY_AFTER_CONVERTION = "Pressione X para verificar o cartão recém-convertido.";
+
 
   TRANSLATORNAME = "nuno6573";
 }

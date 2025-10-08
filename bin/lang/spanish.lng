@@ -51,6 +51,7 @@ LNG = {
   SUCCESS_VERIFYC = "All blocks have been successfully verified";
   VERIFSUMMARY_HEADING = "Conquest Card Verification report";
   CONVERTION_FINISHED = "Convertion finished";
+  CONVERTION_FAILED = "Error al convertir!";
   CONVERTION_CONFIRM = "Proceed to convertion?";
   THIS_WILL_WIPE_CARD = "ALL data currently stored on the card will be lost";
   OFFER_LOGFILE = "too many mismatches to print on screen";
@@ -71,12 +72,12 @@ LNG = {
   ERR_INVALID_CARDMATERIAL_SIZE = "invalid size for 'cardmaterial.bin'";
 
   ERR_DAEMON_MISSING = {
-    "FATAL ERROR",
-    "Security dongle checker driver 'rom0:DAEMON' failed to load",
-    "for the safety of your memory cards, this program cannot continue",
-    "this unit will reboot itself any moment",
-    "if the issue persists, please contact El_isra",
-    "you may reach him over PS2 Space discord with the QR below",
+    "ERROR",
+    "fallo al iniciar el verificador de dongle de seguridad 'rom0:DAEMON'",
+    "por la seguridad de tus tarjetas, este programa no puede continuar",
+    "este arcade se reiniciará por si solo en cualquier momento",
+    "si el problema persiste, contacte a El_isra",
+    "puede hacerlo en el discord PS2 Space con el QR de abajo",
   };
 
   ERR_MISSINGDONGLE = {
@@ -85,6 +86,8 @@ LNG = {
   };
 
   FMT_VERIFSUMMARY = "page %05d: Checksum 0x%08X | Declared Checksum 0x%08X";
+  VERIFY_AFTER_CONVERTION = "Presione X para verificar la tarjeta que acaba de convertir";
+
 
   TRANSLATORNAME = "El_isra";
 }

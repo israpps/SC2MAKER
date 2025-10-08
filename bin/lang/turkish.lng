@@ -45,10 +45,10 @@ LNG = {
     "Tasarım kolaylığı için, bu program yalnızca 2 numaralı portta bulunan kartı işleyecektir",
     "Bir kartı yalnızca program istediğinde veya ana menüde select tuşuna basarak çıkarın/takın",
   };
-  CONQUEST_CARD_VERIF = Conquest Kartı Doğrulaması";
+  CONQUEST_CARD_VERIF = "ConquestConquest Kartı Doğrulaması";
   SUCCESS_VERIFY = "Doğrulama başarılı oldu!";
   SUCCESS_VERIFYC = "Tüm bloklar başarıyla doğrulandı";
-  VERIFSUMMARY_HEADING = Conquest kartı doğrulama raporu";
+  VERIFSUMMARY_HEADING = "Conquest kartı doğrulama raporu";
   CONVERTION_FINISHED = "Dönüştürme tamamlandı";
   CONVERTION_CONFIRM = "Dönüştürmeye devam edilsin mi?";
   THIS_WILL_WIPE_CARD = "Kartta şu anda depolanan tüm veriler kaybolacak";
@@ -84,6 +84,8 @@ LNG = {
   };
 
   FMT_VERIFSUMMARY = "sayfa %05d: Sağlama Toplamı 0x%08X | Beyan Edilen Sağlama Toplamı 0x%08X";
+  VERIFY_AFTER_CONVERTION = "Press X to verify the card you just converted";
+
 
   TRANSLATORNAME = "emulatci";
 }
