@@ -261,6 +261,7 @@ function CreateConquestCard(port)
   local fd = System.openFile("cardmaterial.bin", FREAD)
 
   local ret = 0
+  local r
   local retstr = ""
   local buf
   local pages_per_block = CARD.specs.blocksize
@@ -271,15 +272,15 @@ function CreateConquestCard(port)
       buf = System.readFile(fd, CN.MC_PAGESIZE_ECC)
       if (i % pages_per_block)==0 then
         local blocknum = (i/pages_per_block)
-        ret = Conquest.eraseblock(port, 0, blocknum)
-        if ret ~= 0 then
+        r = Conquest.eraseblock(port, 0, blocknum)
+        if r ~= 0 then
           ret = 1
           retstr = (LNG.FMT_IOERR_ERASINGPAGE):format(i)
           break
         end
       end
-      ret = Conquest.writepage(port, 0, i, buf)
-      if ret ~= 1 then
+      r = Conquest.writepage(port, 0, i, buf)
+      if r ~= 1 then
         ret = 1
         retstr = (LNG.FMT_IOERR_WRITEPAGE):format(i)
         break
@@ -464,10 +465,15 @@ end
 
 function ConvertionReport(ret, retstr)
   Screen.clear()
-  Graphics.drawScaleImage(IMG.background, 0, 0, S.X, S.Y)
   --Graphics.drawRect(0, 40, S.X, 220, Color.new(0,0,0,CLAMP(i, 0, 60)))
-  Font.ftPrint(FNT[1], S.XM, 50 , 8, S.X, S.Y, LNG.CONVERTION_FINISHED)
-  Font.ftPrint(FNT[3], S.XM, 150 , 8, S.X, S.Y, retstr)
+  if ret ~= 0 then
+    Graphics.drawScaleImage(IMG.background_error, 0, 0, S.X, S.Y)
+    Font.ftPrint(FNT[1], S.XM, 50 , 8, S.X, S.Y, LNG.CONVERTION_FAILED)
+    Font.ftPrint(FNT[3], S.XM, 150 , 8, S.X, S.Y, retstr)
+  else
+    Graphics.drawScaleImage(IMG.background, 0, 0, S.X, S.Y)
+    Font.ftPrint(FNT[1], S.XM, 50 , 8, S.X, S.Y, LNG.CONVERTION_FINISHED)
+  end
   Screen.flip()
   while Pads.get() == 0 do
   end
