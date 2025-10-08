@@ -1,1 +1,0 @@
-dofile("pads/pads.lua")
