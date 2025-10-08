@@ -473,10 +473,14 @@ function ConvertionReport(ret, retstr)
   else
     Graphics.drawScaleImage(IMG.background, 0, 0, S.X, S.Y)
     Font.ftPrint(FNT[1], S.XM, 50 , 8, S.X, S.Y, LNG.CONVERTION_FINISHED)
+    Font.ftPrint(FNT[3], S.XM, 150 , 8, S.X, S.Y, LNG.VERIFY_AFTER_CONVERTION)
   end
   Screen.flip()
-  while Pads.get() == 0 do
+  local p = 0
+  while p == 0 do
+    p = Pads.get()
   end
+  return Pads.check(p, PAD_CROSS)
 end
 
 function Credits(t)
@@ -536,11 +540,15 @@ while true do
     end
   elseif UISTATE == UI.CONVERTCARD then
     if CardIsSuitable() == 0 then
-      local a, b
+      local a, b, c
       a, b = CreateConquestCard(1)
-      ConvertionReport(a, b)
+      c = ConvertionReport(a, b)
       Refresh_cardstate(true,true,true)
-      UISTATE = UI.MAINMENU
+      if a == 0 and c then
+        UISTATE = UI.VERIFYCARD
+      else
+        UISTATE = UI.MAINMENU
+      end
       goto continue
     else
       GenericNotif(LNG.INVALID_CARD_FOR_CONVERTION)
