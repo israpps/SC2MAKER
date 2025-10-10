@@ -96,3 +96,23 @@ From here, you could just unplug the card and take it to your system246, fire up
 
     When this program converts a conquest card, it manually corrects the ECC at the moment of programming it. this means that a freshly converted conquest card clone **should never have even a single mismatch** when scanning it with the integrity check feature
 
+## fixing the card encryption 
+
+the conquest card seems to use some sort of encryption for the player data, because of this, the card you just converted is not ready to play.  
+due to not having the valid encryption for the player data, trying to start a match right now will make the game hang on a white screen
+
+to workaround this, we need to let the game fix the encryption.
+
+to do so, run the game with the cloned conquest card plugged, as soon as you the game starts, activate the dip switch 1 of your system246 to enter the game's TESTMODE.
+
+from there, go to clear data option and select the last option (bottom), confirm if the program asks.
+
+what this will do is reset to default all settings and schedule a conquest card reset for the following game reboot
+
+before saving changes in TESTMODE, set back your settings, like Freeplay for example.
+
+when you're ready, save settings, the game will reboot.
+
+this time, the "checking memory card" screen will take like 5 seconds longer than usual, this is because the game is resetting the game data, wich implicitly fixes the encryption of our cloned card.
+
+now your card is ready to play! have fun!!!

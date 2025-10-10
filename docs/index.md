@@ -7,7 +7,8 @@ This program will allow to convert retail `SCPH-10020` memory cards into SoulCal
     a little reminder never hurts. the SoulCalibur2 Conquest cards are intended to be used on a NAMCO System246.  
     If you want to use it on the PlayStation2 release of SoulCalibur2. then this program is not for you!
 
-!!! tip 'First time doing this?"
+
+!!! tip "First time doing this?"
 
     If this is your first time creating a conquest card clone. please read the guide found on this webpage 
 
