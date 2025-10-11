@@ -41,7 +41,7 @@ jobs:
 
     - name: Compile project
       run: |
-        make clean all pack MECHAEMU=1
+        make clean all pack
 
     - name: Get version
       run: |
