@@ -20,7 +20,7 @@ PATCH=0
 PROGVER=$(MAJOR).$(MINOR).$(PATCH)
 PACKNAME=SC2Maker_v$(PROGVER)
 GITHASH=$(shell git rev-parse --short HEAD)
-MECHAEMU=1
+MECHAEMU ?= 1
 #------------------------------------------------------------------#
 #----------------------- Configuration flags ----------------------#
 #------------------------------------------------------------------#

@@ -40,3 +40,4 @@ asm/
 bin/dumpcard_*.bin
 bin/card_verification.log
 *.7z
+/bin/card_dumps
