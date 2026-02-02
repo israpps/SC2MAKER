@@ -334,15 +334,40 @@ for i = 1, #RCP do
   RELEVANT_CARDPAGES[RCP[i]] = true
 end
 
+function CardIntegrityDraw(statusList, pagesChecked, errcnt)
+  local COLOR_OK=Color.new(240,240,240)
+  local COLOR_NG=Color.new(200,0,0)
+  Screen.clear()
+  Graphics.drawScaleImage(IMG.background, 0, 0, S.X, S.Y)
+  Font.ftPrint(FNT[1], S.XM, 60, 8, S.X, S.Y, LNG.VERIFYING_CARD)
+  Font.ftPrint(FNT[3], S.XM, 80, 8, S.X, S.Y, (LNG.FMT_ERR_PAGEMISMATCHES):format(errcnt))
+  local maxPages = pagesChecked or #statusList
+  Graphics.drawRect(100, 100, 512, 256, Color.new(200,200,200, 40))
+
+  for i = 0, maxPages - 1 do
+    local status = statusList[i + 1]
+    if status ~= nil then
+      local col = i % 256
+      local px = 100 + col * 2
+      local py = 100 + math.floor(i / 256) * 4
+
+      local color = status and COLOR_OK or COLOR_NG
+      Graphics.drawRect(px, py, 2, 4, color)
+    end
+  end
+  Screen.flip()
+
+end
+
 function VerifyConquestCard(port)
+  PageStatusList = {}
   local mismatches = { }
   local ret = false
   local calchash, localhash
     for i = 0, CN.MC_AMMOUNT_OF_PAGES-1, 1 do
-      local progi = (i * 100) / CN.MC_AMMOUNT_OF_PAGES
-      if (i%PROG_UPDATE_INTERVAL)==0 then ProgressDisplay(progi, C.SWHITE, LNG.VERIFYING_CARD, ("%.0f%%"):format(progi)) end--
       calchash, localhash = Conquest.verify_page(port, 0, i)
-      if calchash ~= localhash then
+      PageStatusList[i] = (calchash == localhash)
+      if not PageStatusList[i] then
         local unit = {
           page=i;--the page
           chash = calchash; --the hash we think is the correct
@@ -352,7 +377,10 @@ function VerifyConquestCard(port)
         if RELEVANT_CARDPAGES[i] == true then unit.critical = true end
         table.insert(mismatches, unit);
       end
+      if (i%PROG_UPDATE_INTERVAL)==0 then CardIntegrityDraw(PageStatusList, i, #mismatches) end--
     end
+    CardIntegrityDraw(PageStatusList, CN.MC_AMMOUNT_OF_PAGES-1, #mismatches)
+    System.sleep(3)
   return mismatches
 end
 
